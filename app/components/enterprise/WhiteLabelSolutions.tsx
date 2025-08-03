@@ -101,7 +101,7 @@ export const WhiteLabelSolutions: React.FC<WhiteLabelSolutionsProps> = ({
     switch (plan) {
       case 'starter': return 'bg-blue-500';
       case 'professional': return 'bg-purple-500';
-      case 'enterprise': return 'bg-gold-500';
+      case 'enterprise': return 'bg-yellow-500';
       default: return 'bg-gray-500';
     }
   };
