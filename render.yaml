@@ -1,0 +1,54 @@
+services:
+  - type: web
+    name: w3jverse
+    env: node
+    plan: starter
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeploy: true
+    
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: W3JVERSE_BRAND
+        value: "true"
+      - key: NODE_OPTIONS
+        value: "--max-old-space-size=1024"
+    
+    scaling:
+      minInstances: 1
+      maxInstances: 5
+      targetCPUPercent: 70
+      
+    routes:
+      - type: rewrite
+        source: /api/ai/*
+        destination: /api/ai/*
+      - type: rewrite
+        source: /*
+        destination: /index.html
+        
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - path: /build/client/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+        
+    regions:
+      - oregon
+      - virginia
+      - singapore
+      
+databases:
+  - name: w3jverse-redis
+    plan: starter
+    region: oregon

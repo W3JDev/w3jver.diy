@@ -1,0 +1,35 @@
+[build]
+  builder = "nixpacks"
+  buildCommand = "npm run build"
+
+[deploy]
+  startCommand = "npm start"
+  healthcheckPath = "/health"
+  healthcheckTimeout = 300
+  restartPolicyType = "on_failure"
+  restartPolicyMaxRetries = 3
+
+[observability]
+  autoCrashReporting = true
+
+[networking]
+  serviceDomains = ["w3jverse.railway.app"]
+
+[scaling]
+  minReplicas = 1
+  maxReplicas = 10
+  targetCPU = 80
+  targetMemory = 80
+
+[resources]
+  cpuLimit = "2000m"
+  memoryLimit = "2Gi"
+
+[env]
+  NODE_ENV = "production"
+  PORT = "3000"
+  W3JVERSE_BRAND = "true"
+
+[variables]
+  npm_config_production = "true"
+  NODE_OPTIONS = "--max-old-space-size=1024"

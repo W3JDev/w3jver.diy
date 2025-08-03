@@ -1,0 +1,71 @@
+app = "w3jverse"
+primary_region = "iad"
+kill_signal = "SIGINT"
+kill_timeout = "5s"
+
+[build]
+  image = "node:18-alpine"
+  [build.args]
+    NODE_ENV = "production"
+
+[env]
+  NODE_ENV = "production"
+  PORT = "8080"
+  W3JVERSE_BRAND = "true"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ["app"]
+
+  [[http_service.checks]]
+    grace_period = "10s"
+    interval = "30s"
+    method = "GET"
+    timeout = "5s"
+    path = "/health"
+
+[machine]
+  memory = 1024
+  cpu_kind = "performance"
+  cpus = 2
+
+[[machines]]
+  [machines.files]
+    [machines.files."/app"]
+      source = "."
+      destination = "/app"
+
+[deploy]
+  release_command = "npm run build"
+  strategy = "rolling"
+
+[[services]]
+  protocol = "tcp"
+  internal_port = 8080
+  processes = ["app"]
+
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+    force_https = true
+
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
+
+  [services.concurrency]
+    type = "connections"
+    hard_limit = 25
+    soft_limit = 20
+
+[[vm]]
+  size = "performance-1x"
+  regions = ["iad", "lax", "lhr", "nrt", "syd"]
+
+[metrics]
+  port = 9091
+  path = "/metrics"

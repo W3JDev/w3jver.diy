@@ -13,9 +13,10 @@ export default class XAIProvider extends BaseProvider {
   };
 
   staticModels: ModelInfo[] = [
-    { name: 'grok-3-beta', label: 'xAI Grok 3 Beta', provider: 'xAI', maxTokenAllowed: 8000 },
-    { name: 'grok-beta', label: 'xAI Grok Beta', provider: 'xAI', maxTokenAllowed: 8000 },
-    { name: 'grok-2-1212', label: 'xAI Grok2 1212', provider: 'xAI', maxTokenAllowed: 8000 },
+    { name: 'grok-3-beta', label: 'Grok 3 Beta - Latest', provider: 'xAI', maxTokenAllowed: 131072 },
+    { name: 'grok-2-1212', label: 'Grok 2 (December 2024)', provider: 'xAI', maxTokenAllowed: 131072 },
+    { name: 'grok-beta', label: 'Grok Beta', provider: 'xAI', maxTokenAllowed: 131072 },
+    { name: 'grok-2-vision-beta', label: 'Grok 2 Vision Beta', provider: 'xAI', maxTokenAllowed: 131072 },
   ];
 
   getModelInstance(options: {

@@ -1,0 +1,100 @@
+# Multi-stage build for W3Jverse - Optimized for Production
+ARG NODE_VERSION=18.18.0
+ARG ALPINE_VERSION=3.18
+
+# Base stage with security hardening
+FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS base
+
+# Install security updates and required packages
+RUN apk update && apk upgrade && \
+    apk add --no-cache \
+    dumb-init \
+    curl \
+    ca-certificates && \
+    rm -rf /var/cache/apk/*
+
+# Create non-root user for security
+RUN addgroup -g 1001 -S w3jgroup && \
+    adduser -S w3juser -u 1001 -G w3jgroup
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json pnpm-lock.yaml ./
+
+# Install pnpm globally
+RUN npm install -g pnpm@latest
+
+# Dependencies stage
+FROM base AS dependencies
+
+# Install dependencies with optimizations
+RUN pnpm config set store-dir /root/.pnpm-store && \
+    pnpm install --frozen-lockfile --prefer-offline && \
+    pnpm store prune
+
+# Build stage
+FROM dependencies AS builder
+
+# Copy source code
+COPY . .
+
+# W3Jverse environment variables
+ENV NODE_ENV=production
+ENV W3JVERSE_BRAND=true
+ENV VITE_W3JVERSE_THEME=premium
+
+# Build the application
+RUN pnpm run build && \
+    pnpm prune --prod
+
+# Production stage
+FROM base AS w3jverse-production
+
+# Security labels
+LABEL maintainer="W3Jverse Team <maintainers@w3jverse.com>"
+LABEL org.opencontainers.image.title="W3Jverse"
+LABEL org.opencontainers.image.description="Premium AI Full-Stack Development Platform"
+LABEL org.opencontainers.image.version="1.0.0"
+
+# Production environment
+ENV NODE_ENV=production
+ENV PORT=5173
+ENV W3JVERSE_BRAND=true
+ENV RUNNING_IN_DOCKER=true
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:${PORT}/health || exit 1
+
+# Copy built application
+COPY --from=builder --chown=w3juser:w3jgroup /app/build ./build
+COPY --from=builder --chown=w3juser:w3jgroup /app/node_modules ./node_modules
+COPY --from=builder --chown=w3juser:w3jgroup /app/package.json ./
+COPY --from=builder --chown=w3juser:w3jgroup /app/pnpm-lock.yaml ./
+
+# Switch to non-root user
+USER w3juser
+
+# Expose port
+EXPOSE ${PORT}
+
+# Use dumb-init for proper signal handling
+ENTRYPOINT ["dumb-init", "--"]
+
+# Start the application
+CMD ["pnpm", "run", "dockerstart"]
+
+# Development stage
+FROM dependencies AS w3jverse-development
+
+ENV NODE_ENV=development
+ENV W3JVERSE_BRAND=true
+
+COPY --chown=w3juser:w3jgroup . .
+
+USER w3juser
+
+EXPOSE 5173
+
+CMD ["pnpm", "run", "dev", "--host"]
