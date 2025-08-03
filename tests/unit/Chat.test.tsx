@@ -51,7 +51,7 @@ describe('W3Jverse AI Chat Interface', () => {
 
   test('should generate code under 2 seconds', async () => {
     const mockResponse = { content: 'Generated code', timing: 1800 };
-    vi.fn().mockResolvedValue(mockResponse);
+    vi.spyOn(api, 'generateCode').mockResolvedValue(mockResponse);
 
     render(<BaseChat />);
     
