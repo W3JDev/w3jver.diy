@@ -13,9 +13,10 @@ export default class DeepseekProvider extends BaseProvider {
   };
 
   staticModels: ModelInfo[] = [
-    { name: 'deepseek-coder', label: 'Deepseek-Coder', provider: 'Deepseek', maxTokenAllowed: 8000 },
-    { name: 'deepseek-chat', label: 'Deepseek-Chat', provider: 'Deepseek', maxTokenAllowed: 8000 },
-    { name: 'deepseek-reasoner', label: 'Deepseek-Reasoner', provider: 'Deepseek', maxTokenAllowed: 8000 },
+    { name: 'deepseek-v3', label: 'DeepSeek V3 - Latest', provider: 'Deepseek', maxTokenAllowed: 65536 },
+    { name: 'deepseek-reasoner', label: 'DeepSeek Reasoner', provider: 'Deepseek', maxTokenAllowed: 65536 },
+    { name: 'deepseek-chat', label: 'DeepSeek Chat', provider: 'Deepseek', maxTokenAllowed: 32768 },
+    { name: 'deepseek-coder', label: 'DeepSeek Coder', provider: 'Deepseek', maxTokenAllowed: 32768 },
   ];
 
   getModelInstance(options: {

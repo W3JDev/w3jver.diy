@@ -13,11 +13,13 @@ export default class OpenAIProvider extends BaseProvider {
   };
 
   staticModels: ModelInfo[] = [
-    { name: 'gpt-4o', label: 'GPT-4o', provider: 'OpenAI', maxTokenAllowed: 8000 },
-    { name: 'gpt-4o-mini', label: 'GPT-4o Mini', provider: 'OpenAI', maxTokenAllowed: 8000 },
-    { name: 'gpt-4-turbo', label: 'GPT-4 Turbo', provider: 'OpenAI', maxTokenAllowed: 8000 },
-    { name: 'gpt-4', label: 'GPT-4', provider: 'OpenAI', maxTokenAllowed: 8000 },
-    { name: 'gpt-3.5-turbo', label: 'GPT-3.5 Turbo', provider: 'OpenAI', maxTokenAllowed: 8000 },
+    { name: 'o1', label: 'O1 - Latest Reasoning Model', provider: 'OpenAI', maxTokenAllowed: 200000 },
+    { name: 'o1-mini', label: 'O1 Mini', provider: 'OpenAI', maxTokenAllowed: 128000 },
+    { name: 'gpt-4o', label: 'GPT-4o', provider: 'OpenAI', maxTokenAllowed: 128000 },
+    { name: 'gpt-4o-mini', label: 'GPT-4o Mini', provider: 'OpenAI', maxTokenAllowed: 128000 },
+    { name: 'gpt-4-turbo', label: 'GPT-4 Turbo', provider: 'OpenAI', maxTokenAllowed: 128000 },
+    { name: 'gpt-4', label: 'GPT-4', provider: 'OpenAI', maxTokenAllowed: 128000 },
+    { name: 'gpt-3.5-turbo', label: 'GPT-3.5 Turbo', provider: 'OpenAI', maxTokenAllowed: 16384 },
   ];
 
   async getDynamicModels(
